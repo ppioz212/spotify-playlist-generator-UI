@@ -34,7 +34,7 @@ export default {
       if (this.code == null) {
         this.$router.push('/login');
       } else {
-        this.getToken();
+        await this.getToken();
         //TODO: add logic here when getToken fails (due to error or server being down)
         this.$router.push('/playlist');
       }
