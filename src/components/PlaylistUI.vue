@@ -30,10 +30,10 @@
     <Checkbox v-model="likedSongsBox" :binary="true" />
     <label> Liked Songs</label>
   </div>
-  <div v-for="item in allPlaylists" :key="item.playlistId">
-    <Checkbox  v-model="checkedPlaylists" :value="item.playlistId" />
+  <div v-for="playlist in allPlaylists" :key="playlist.id">
+    <Checkbox  v-model="checkedPlaylists" :value="playlist.id" />
     <label style="margin-left: 5px">
-      {{ item.playlistName }} by {{ item.playlistOwner }}
+      {{ playlist.name }} by {{ playlist.owner }}
     </label>
   </div>
   <!-- <li v-for="item in checkedPlaylists" :key="item">
@@ -84,10 +84,10 @@ export default {
 
   methods: {
     checkBox1ChangeEvent() {
-      const userCreatedPlaylistsObjs = this.allPlaylists.filter((item) => item.playlistType == "ALL_USER_CREATED");
+      const userCreatedPlaylistsObjs = this.allPlaylists.filter((item) => item.type == "ALL_USER_CREATED");
 
       for(let value of userCreatedPlaylistsObjs) {
-        this.userCreatedPlaylists.push(value.playlistId); 
+        this.userCreatedPlaylists.push(value.id); 
       }
 
       if (this.userCreatedBox) {
@@ -104,10 +104,10 @@ export default {
     },
     
     checkBox2ChangeEvent() {
-      const allFollowedPlaylistsObjs = this.allPlaylists.filter((item) => item.playlistType == "ALL_FOLLOWED_PLAYLISTS");
+      const allFollowedPlaylistsObjs = this.allPlaylists.filter((item) => item.type == "ALL_FOLLOWED_PLAYLISTS");
 
       for(let value of allFollowedPlaylistsObjs) {
-        this.allFollowedPlaylists.push(value.playlistId); 
+        this.allFollowedPlaylists.push(value.id); 
       }
 
       if (this.followedPlaylistsBox) {
@@ -147,14 +147,6 @@ export default {
 };
 </script>
 <style scoped>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  /* -webkit-font-smoothing: antialiased; */
-  /* -moz-osx-font-smoothing: grayscale; */
-  /* text-align: center; */
-  /* margin-top: 60px; */
-}
-
 .button {
   margin: 5px;
 }
@@ -163,6 +155,7 @@ export default {
   display: flex;
 }
 .mainmenu {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   background: rgba(248, 249, 250, 255);
   border-color: rgba(223, 225, 230, 255);
   border-style: solid;
