@@ -19,48 +19,60 @@
       />
     </div>
   </div>
-  <div>
-    {{ checkedPlaylists.length }}
-  </div>
-  <div style="display: flexbox">
-    <Checkbox
-      v-model="userCreatedBox"
-      :binary="true"
-      @change="checkBox1ChangeEvent()"
-    />
-    <label> User Created Playlists </label>
 
-    <Checkbox
-      v-model="followedPlaylistsBox"
-      :binary="true"
-      @change="checkBox2ChangeEvent()"
-    />
-    <label> Followed Playlists</label>
+  <div v-if="playlistSelection">
+    <div>
+      Selected Playlists: {{ checkedPlaylists.length }} Selected Albums:
+      {{ checkedAlbums.length }}
+    </div>
+    <div style="display: flexbox">
+      <Checkbox
+        v-model="userCreatedBox"
+        :binary="true"
+        @change="userCreatedCheckBoxEvent()"
+      />
+      <label> User Created Playlists </label>
 
-    <Checkbox v-model="likedSongsBox" :binary="true" />
-    <label> Liked Songs</label>
-  </div>
-  <div class="selectionParent">
-    <div class="selectionElement">
-      <div v-for="playlist in allPlaylists" :key="playlist.id">
-        <Checkbox v-model="checkedPlaylists" :value="playlist.id" />
-        <label style="margin-left: 5px">
-          {{ playlist.name }} by {{ playlist.owner }}
-        </label>
+      <Checkbox
+        v-model="followedPlaylistsBox"
+        :binary="true"
+        @change="followedPlaylistsCheckBoxEvent()"
+      />
+      <label> Followed Playlists</label>
+
+      <Checkbox v-model="likedSongsBox" :binary="true" />
+      <label> Liked Songs</label>
+
+      <Checkbox
+        v-model="allAlbumsCheck"
+        :binary="true"
+        @change="AllAlbumsCheckBoxEvent()"
+      />
+      <label> Select All </label>
+    </div>
+    <div class="selectionParent" v-if="playlistSelection">
+      <div class="selectionElement">
+        <div v-for="playlist in allPlaylists" :key="playlist.id">
+          <Checkbox v-model="checkedPlaylists" :value="playlist.id" />
+          <label style="margin-left: 5px">
+            {{ playlist.name }} by {{ playlist.owner }}
+          </label>
+        </div>
+      </div>
+      <div class="selectionElement">
+        <div v-for="album in allAlbumObjs" :key="album.id">
+          <Checkbox v-model="checkedAlbums" :value="album.id" />
+          <label style="margin-left: 5px">
+            {{ album.name }} by {{ album.artists }}
+          </label>
+        </div>
       </div>
     </div>
-    <div class="selectionElement">
-      <div v-for="album in allAlbums" :key="album.id">
-        <Checkbox v-model="checkedAlbums" :value="album.id" />
-        <label style="margin-left: 5px">
-          {{ album.name }} by {{ album.id }}
-        </label>
-      </div>
-    </div>
   </div>
-  <!-- <li v-for="item in checkedPlaylists" :key="item">
-    {{ item }}
-  </li> -->
+  <div v-if="!playlistSelection">
+    <p>Loading Playlists and Albums</p>
+    <MySpinner />
+  </div>
   <MySpinner v-if="loadingScreen" />
   <ResultPage :data="this.newPlaylistId" v-if="showIframe" />
 </template>
@@ -88,8 +100,8 @@ export default {
       userCreatedBox: false,
       followedPlaylistsBox: false,
       likedSongsBox: false,
-      userCreatedPlaylists: [],
-      allFollowedPlaylists: [],
+      playlistSelection: false,
+      allAlbumsCheck: false,
       checkedPlaylists: [],
       checkedAlbums: [],
     };
@@ -103,26 +115,28 @@ export default {
       })
     ).data;
     console.log(this.allPlaylists);
-    this.allAlbums = (
+    this.allAlbumObjs = (
       await axios.get("http://localhost:8080/getAlbums", {
         headers: { Authorization: tokenObject.access_token },
       })
     ).data;
-    console.log(this.allAlbums);
+    console.log(this.allAlbumObjs);
+    this.playlistSelection = true;
   },
 
   methods: {
-    checkBox1ChangeEvent() {
+    userCreatedCheckBoxEvent() {
+      const userCreatedPlaylistIds = [];
       const userCreatedPlaylistsObjs = this.allPlaylists.filter(
         (item) => item.type == "ALL_USER_CREATED"
       );
 
       for (let value of userCreatedPlaylistsObjs) {
-        this.userCreatedPlaylists.push(value.id);
+        userCreatedPlaylistIds.push(value.id);
       }
 
       if (this.userCreatedBox) {
-        for (let item of this.userCreatedPlaylists) {
+        for (let item of userCreatedPlaylistIds) {
           if (!this.checkedPlaylists.includes(item)) {
             this.checkedPlaylists.push(item);
           }
@@ -131,22 +145,23 @@ export default {
 
       if (!this.userCreatedBox) {
         this.checkedPlaylists = this.checkedPlaylists.filter(
-          (item) => !this.userCreatedPlaylists.includes(item)
+          (item) => !userCreatedPlaylistIds.includes(item)
         );
       }
     },
 
-    checkBox2ChangeEvent() {
+    followedPlaylistsCheckBoxEvent() {
+      const allFollowedPlaylistIds = [];
       const allFollowedPlaylistsObjs = this.allPlaylists.filter(
         (item) => item.type == "ALL_FOLLOWED_PLAYLISTS"
       );
 
       for (let value of allFollowedPlaylistsObjs) {
-        this.allFollowedPlaylists.push(value.id);
+        allFollowedPlaylistIds.push(value.id);
       }
 
       if (this.followedPlaylistsBox) {
-        for (let item of this.allFollowedPlaylists) {
+        for (let item of allFollowedPlaylistIds) {
           if (!this.checkedPlaylists.includes(item)) {
             this.checkedPlaylists.push(item);
           }
@@ -155,8 +170,26 @@ export default {
 
       if (!this.followedPlaylistsBox) {
         this.checkedPlaylists = this.checkedPlaylists.filter(
-          (item) => !this.allFollowedPlaylists.includes(item)
+          (item) => !allFollowedPlaylistIds.includes(item)
         );
+      }
+    },
+
+    AllAlbumsCheckBoxEvent() {
+      const allAlbumIds = [];
+      for (let value of this.allAlbumObjs) {
+        allAlbumIds.push(value.id);
+      }
+
+      if (this.allAlbumsCheck) {
+        for (let item of allAlbumIds) {
+          if (!this.checkedAlbums.includes(item)) {
+            this.checkedAlbums.push(item);
+          }
+        }
+      }
+      if (!this.allAlbumsCheck) {
+        this.checkedAlbums = [];
       }
     },
 
