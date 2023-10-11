@@ -1,7 +1,7 @@
 <template>
-<div class="mainmenu">
-      <h1>Spotify Playlist Generation</h1>
-    <div id="app">
+  <div class="mainmenu">
+    <h1>Spotify Playlist Generation</h1>
+    <div >
       <p>
         Please login with your spotify account to generate the playlist of your
         choosing
@@ -12,15 +12,13 @@
         @click="openAuthorizatonUrl()"
       />
     </div>
-</div>
+  </div>
 </template>
 <script>
 import axios from "axios";
 export default {
- components: {
-    
-  },
-  
+  components: {},
+
   data() {
     return {
       code: "",
@@ -38,30 +36,33 @@ export default {
       doesTokenExist &&
       date.getTime() / 1000 < tokenObject.timeGenerated + tokenObject.expires_in
     ) {
-      console.log('token still usable')
+      console.log("token still usable");
     } else {
       let urlParams = new URLSearchParams(window.location.search);
       console.log(urlParams.has("code"));
       this.code = urlParams.get("code");
       if (this.code != null) {
         this.getToken();
-        
       }
     }
   },
 
   methods: {
-     openAuthorizatonUrl() {
+    openAuthorizatonUrl() {
       const clientId = "1dbfd19797084691bbd011cab62cb6a6";
-      const redirectUri = "http://localhost:3000"
-      const scope ="user-read-private%20" +"playlist-modify-private%20" +
-                "playlist-modify-public%20" +"user-library-read%20" +
-                "user-read-email%20" +"playlist-read-collaborative%20" +
-                "playlist-read-private%20" +"user-library-read";
-      const AuthUrl = "https://accounts.spotify.com/authorize?" + "response_type=code"
-                + "&client_id=" + clientId
-                + "&scope=" + scope
-                + "&redirect_uri=" + redirectUri;
+      const redirectUri = "http://localhost:3000";
+      const scope =
+        "user-read-private%20" + "playlist-modify-private%20" +
+        "playlist-modify-public%20" + "user-library-read%20" +
+        "user-read-email%20" + "playlist-read-collaborative%20" +
+        "playlist-read-private%20" + "user-library-read";
+      const AuthUrl =
+        "https://accounts.spotify.com/authorize?response_type=code" +
+        "&client_id=" + clientId +
+        "&scope=" + scope +
+        "&redirect_uri=" + redirectUri;
+      // + "&show_dialog=true";  // Use for proper usage of application to allow logging in and out easily
+
       window.open(AuthUrl, "_self", "noreferrer");
     },
 
@@ -78,20 +79,10 @@ export default {
       const parsed = JSON.stringify(this.accessTokenObject);
       localStorage.setItem("token", parsed);
     },
-
-
   },
 };
 </script>
 <style scoped>
-#app {
-  /* display: inline-block; */
-  /* -webkit-font-smoothing: antialiased; */
-  /* -moz-osx-font-smoothing: grayscale; */
-  text-align: center;
-  /* margin-top: 60px; */
-}
-
 .mainmenu {
   background: rgba(248, 249, 250, 255);
   border-color: rgba(223, 225, 230, 255);

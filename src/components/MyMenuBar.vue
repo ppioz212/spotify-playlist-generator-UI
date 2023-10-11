@@ -14,24 +14,24 @@
   </Menubar>
 </template>
 <script>
-  export default {
-      data() {
+export default {
+  data() {
     return {
       items: [
         {
           label: "Home",
           url: "http://localhost:3000",
         },
-      ]
-    }
-},
+      ],
+    };
+  },
 
-methods: {
+  methods: {
     logout() {
       localStorage.removeItem("token");
-      window.location.href = 'http://localhost:3000';
+      window.location.href = "http://localhost:3000";
     },
-  }
+  },
 };
 </script>
 <style>

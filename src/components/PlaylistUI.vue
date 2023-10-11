@@ -8,8 +8,10 @@
           <label class="center" for="playlistname">Name of Playlist</label>
         </span>
       </div>
-      <p style="margin-bottom: 0px" > Select what Playlists/Albums you'd like to include: </p>
-      <p style="margin-top: 0px" > (You must select at least one item)</p>
+      <p style="margin-bottom: 0px">
+        Select what Playlists/Albums you'd like to include:
+      </p>
+      <p style="margin-top: 0px">(You must select at least one item)</p>
       <Button
         class="button"
         label="Generate Playlist"
@@ -21,20 +23,40 @@
     {{ checkedPlaylists.length }}
   </div>
   <div style="display: flexbox">
-    <Checkbox v-model="userCreatedBox" :binary="true" @change="checkBox1ChangeEvent()" />
-    <label > User Created Playlists </label>
+    <Checkbox
+      v-model="userCreatedBox"
+      :binary="true"
+      @change="checkBox1ChangeEvent()"
+    />
+    <label> User Created Playlists </label>
 
-    <Checkbox v-model="followedPlaylistsBox" :binary="true" @change="checkBox2ChangeEvent()" />
+    <Checkbox
+      v-model="followedPlaylistsBox"
+      :binary="true"
+      @change="checkBox2ChangeEvent()"
+    />
     <label> Followed Playlists</label>
 
     <Checkbox v-model="likedSongsBox" :binary="true" />
     <label> Liked Songs</label>
   </div>
-  <div v-for="playlist in allPlaylists" :key="playlist.id">
-    <Checkbox  v-model="checkedPlaylists" :value="playlist.id" />
-    <label style="margin-left: 5px">
-      {{ playlist.name }} by {{ playlist.owner }}
-    </label>
+  <div class="selectionParent">
+    <div class="selectionElement">
+      <div v-for="playlist in allPlaylists" :key="playlist.id">
+        <Checkbox v-model="checkedPlaylists" :value="playlist.id" />
+        <label style="margin-left: 5px">
+          {{ playlist.name }} by {{ playlist.owner }}
+        </label>
+      </div>
+    </div>
+    <div class="selectionElement">
+      <div v-for="album in allAlbums" :key="album.id">
+        <Checkbox v-model="checkedAlbums" :value="album.id" />
+        <label style="margin-left: 5px">
+          {{ album.name }} by {{ album.id }}
+        </label>
+      </div>
+    </div>
   </div>
   <!-- <li v-for="item in checkedPlaylists" :key="item">
     {{ item }}
@@ -63,12 +85,13 @@ export default {
       iframeUrl: "",
       playlistUI: true,
       showIframe: false,
-      checkedPlaylists: [],
       userCreatedBox: false,
       followedPlaylistsBox: false,
       likedSongsBox: false,
-      userCreatedPlaylists:[],
-      allFollowedPlaylists:[]
+      userCreatedPlaylists: [],
+      allFollowedPlaylists: [],
+      checkedPlaylists: [],
+      checkedAlbums: [],
     };
   },
 
@@ -80,14 +103,22 @@ export default {
       })
     ).data;
     console.log(this.allPlaylists);
+    this.allAlbums = (
+      await axios.get("http://localhost:8080/getAlbums", {
+        headers: { Authorization: tokenObject.access_token },
+      })
+    ).data;
+    console.log(this.allAlbums);
   },
 
   methods: {
     checkBox1ChangeEvent() {
-      const userCreatedPlaylistsObjs = this.allPlaylists.filter((item) => item.type == "ALL_USER_CREATED");
+      const userCreatedPlaylistsObjs = this.allPlaylists.filter(
+        (item) => item.type == "ALL_USER_CREATED"
+      );
 
-      for(let value of userCreatedPlaylistsObjs) {
-        this.userCreatedPlaylists.push(value.id); 
+      for (let value of userCreatedPlaylistsObjs) {
+        this.userCreatedPlaylists.push(value.id);
       }
 
       if (this.userCreatedBox) {
@@ -99,15 +130,19 @@ export default {
       }
 
       if (!this.userCreatedBox) {
-        this.checkedPlaylists = this.checkedPlaylists.filter((item) => !this.userCreatedPlaylists.includes(item));
+        this.checkedPlaylists = this.checkedPlaylists.filter(
+          (item) => !this.userCreatedPlaylists.includes(item)
+        );
       }
     },
-    
-    checkBox2ChangeEvent() {
-      const allFollowedPlaylistsObjs = this.allPlaylists.filter((item) => item.type == "ALL_FOLLOWED_PLAYLISTS");
 
-      for(let value of allFollowedPlaylistsObjs) {
-        this.allFollowedPlaylists.push(value.id); 
+    checkBox2ChangeEvent() {
+      const allFollowedPlaylistsObjs = this.allPlaylists.filter(
+        (item) => item.type == "ALL_FOLLOWED_PLAYLISTS"
+      );
+
+      for (let value of allFollowedPlaylistsObjs) {
+        this.allFollowedPlaylists.push(value.id);
       }
 
       if (this.followedPlaylistsBox) {
@@ -119,40 +154,51 @@ export default {
       }
 
       if (!this.followedPlaylistsBox) {
-        this.checkedPlaylists = this.checkedPlaylists.filter((item) => !this.allFollowedPlaylists.includes(item));
+        this.checkedPlaylists = this.checkedPlaylists.filter(
+          (item) => !this.allFollowedPlaylists.includes(item)
+        );
       }
     },
 
-  async generatePlaylist() {
-    const playlistObject = {
-      nameOfPlaylist: this.inputValue,
-      playlistsToAdd: this.checkedPlaylists,
-      addLikedSongs: this.likedSongsBox
-    };
-    this.playlistUI = false;
-    const tokenObject = JSON.parse(localStorage.getItem("token"));
-    this.loadingScreen = true;
-    this.newPlaylistId = (
-      await axios.post(
-        "http://localhost:8080/generateNewPlaylist",
-        playlistObject,
-        { headers: { Authorization: tokenObject.access_token } }
-      )
-    ).data;
-    this.loadingScreen = false;
-    console.log(this.newPlaylistId);
-    this.showIframe = true;
+    async generatePlaylist() {
+      const playlistObject = {
+        nameOfPlaylist: this.inputValue,
+        playlistsToAdd: this.checkedPlaylists,
+        addLikedSongs: this.likedSongsBox,
+        albumsToAdd: this.checkedAlbums,
+      };
+      this.playlistUI = false;
+      const tokenObject = JSON.parse(localStorage.getItem("token"));
+      this.loadingScreen = true;
+      this.newPlaylistId = (
+        await axios.post(
+          "http://localhost:8080/generateNewPlaylist",
+          playlistObject,
+          { headers: { Authorization: tokenObject.access_token } }
+        )
+      ).data;
+      this.loadingScreen = false;
+      console.log(this.newPlaylistId);
+      this.showIframe = true;
+    },
   },
-}
 };
 </script>
 <style scoped>
 .button {
   margin: 5px;
 }
-
-.iframe {
+.selectionParent {
+  margin-right: 25%;
+  margin-left: 25%;
   display: flex;
+}
+.selectionElement {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  background: rgba(248, 249, 250, 255);
 }
 .mainmenu {
   font-family: Avenir, Helvetica, Arial, sans-serif;

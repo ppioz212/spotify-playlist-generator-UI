@@ -3,7 +3,7 @@
   <div>
     <iframe
       title="Spotify Embed: Recommendation Playlist "
-      :src=this.iframeUrl
+      :src="this.iframeUrl"
       width="50%"
       height="500px"
       frameBorder="0"
@@ -14,20 +14,22 @@
 </template>
 <script>
 export default {
-    props: {
-  data: {
-    type: String,
-    required: true
-  }
-},
+  props: {
+    data: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       iframeUrl: "",
     };
   },
   mounted() {
-          this.iframeUrl ="https://open.spotify.com/embed/playlist/" + this.data + "?utm_source=generator&theme=0";
-
+    this.iframeUrl =
+      "https://open.spotify.com/embed/playlist/" +
+      this.data +
+      "?utm_source=generator&theme=0";
   },
 };
 </script>
