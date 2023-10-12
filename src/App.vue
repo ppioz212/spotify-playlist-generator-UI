@@ -1,12 +1,12 @@
 <template>
-<MyMenuBar/>
-<router-view></router-view>
+  <MyMenuBar />
+  <router-view></router-view>
 </template>
 
-<script>
+<script lang="ts">
 import axios from "axios";
-import { RouterView } from 'vue-router'
-import MyMenuBar from './components/MyMenuBar.vue'
+import { RouterView } from "vue-router";
+import MyMenuBar from "./components/MyMenuBar.vue";
 
 export default {
   components: {
@@ -21,22 +21,26 @@ export default {
 
   async mounted() {
     let doesTokenExist = false;
-    doesTokenExist = localStorage.getItem("token");
-    const tokenObject = JSON.parse(localStorage.getItem("token"));
+    if (localStorage.getItem("token") != null) {
+      doesTokenExist = true;
+    }
+    let tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
     let date = new Date();
-
-    if (doesTokenExist && date.getTime()/1000 < tokenObject.timeGenerated + tokenObject.expires_in) {
-        this.$router.push('/playlist');
+    if (
+      doesTokenExist &&
+      date.getTime() / 1000 < tokenObject.timeGenerated + tokenObject.expires_in
+    ) {
+      this.$router.push("/playlist");
     } else {
       let urlParams = new URLSearchParams(window.location.search);
       console.log(urlParams.has("code"));
-      this.code = urlParams.get("code");
-      if (this.code == null) {
-        this.$router.push('/login');
+      this.code = urlParams.get("code") || "";
+      if (this.code == "") {
+        this.$router.push("/login");
       } else {
         await this.getToken();
         //TODO: add logic here when getToken fails (due to error or server being down)
-        this.$router.push('/playlist');
+        this.$router.push("/playlist");
       }
     }
   },
@@ -57,7 +61,7 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir,Helvetica,Arial,sans-serif;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   /* -webkit-font-smoothing: antialiased; */
   /* -moz-osx-font-smoothing: grayscale; */
   text-align: center;
