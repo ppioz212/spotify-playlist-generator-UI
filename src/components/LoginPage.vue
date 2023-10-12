@@ -26,25 +26,12 @@ export default {
   },
 
   async mounted() {
-    let doesTokenExist = false;
-    if (localStorage.getItem("token") != null) {
-      doesTokenExist = true;
-    }
-    let tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-    let date = new Date();
-    if (
-      doesTokenExist &&
-      date.getTime() / 1000 < tokenObject.timeGenerated + tokenObject.expires_in
-    ) {
-      console.log("token still usable");
-    } else {
       let urlParams = new URLSearchParams(window.location.search);
       console.log(urlParams.has("code"));
       this.code = urlParams.get("code") || "";
       if (this.code != "") {
         this.getToken();
       }
-    }
   },
 
   methods: {
