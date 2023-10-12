@@ -52,18 +52,18 @@
     </div>
     <div class="selectionParent" v-if="playlistSelection">
       <div class="selectionElement">
-        <div v-for="playlist in allPlaylists" :key="playlist.id">
-          <Checkbox v-model="checkedPlaylists" :value="playlist.id" />
+        <div v-for="playlist in allPlaylistObjs" :key="playlist['id']">
+          <Checkbox v-model="checkedPlaylists" :value="playlist['id']" />
           <label style="margin-left: 5px">
-            {{ playlist.name }} by {{ playlist.owner }}
+            {{ playlist['name'] }} by {{ playlist['owner'] }}
           </label>
         </div>
       </div>
       <div class="selectionElement">
-        <div v-for="album in allAlbumObjs" :key="album.id">
-          <Checkbox v-model="checkedAlbums" :value="album.id" />
+        <div v-for="album in allAlbumObjs" :key="album['id']">
+          <Checkbox v-model="checkedAlbums" :value="album['id']" />
           <label style="margin-left: 5px">
-            {{ album.name }} by {{ album.artists }}
+            {{ album['name'] }} by {{ album['artists'] }}
           </label>
         </div>
       </div>
@@ -74,10 +74,11 @@
     <MySpinner />
   </div>
   <MySpinner v-if="loadingScreen" />
-  <ResultPage :data="this.newPlaylistId" v-if="showIframe" />
+  <ResultPage :data="newPlaylistId" v-if="showIframe" />
 </template>
 
-<script>
+<script lang="ts">
+
 import axios from "axios";
 import MySpinner from "./MySpinner.vue";
 import ResultPage from "./ResultPage.vue";
@@ -102,19 +103,22 @@ export default {
       likedSongsBox: false,
       playlistSelection: false,
       allAlbumsCheck: false,
-      checkedPlaylists: [],
-      checkedAlbums: [],
+      checkedPlaylists: [] as string[],
+      checkedAlbums: [] as string[],
+      allAlbumObjs: [],
+      allPlaylistObjs: [],
+      
     };
   },
 
   async mounted() {
-    const tokenObject = JSON.parse(localStorage.getItem("token"));
-    this.allPlaylists = (
+    const tokenObject = JSON.parse(localStorage.getItem("token") || '{}');
+    this.allPlaylistObjs = (
       await axios.get("http://localhost:8080/getPlaylists", {
         headers: { Authorization: tokenObject.access_token },
       })
     ).data;
-    console.log(this.allPlaylists);
+    console.log(this.allPlaylistObjs);
     this.allAlbumObjs = (
       await axios.get("http://localhost:8080/getAlbums", {
         headers: { Authorization: tokenObject.access_token },
@@ -126,13 +130,13 @@ export default {
 
   methods: {
     userCreatedCheckBoxEvent() {
-      const userCreatedPlaylistIds = [];
-      const userCreatedPlaylistsObjs = this.allPlaylists.filter(
-        (item) => item.type == "ALL_USER_CREATED"
+      const userCreatedPlaylistIds: string[] = [];
+      const userCreatedPlaylistsObjs = this.allPlaylistObjs.filter(
+        (item) => item['type'] == "ALL_USER_CREATED"
       );
 
       for (let value of userCreatedPlaylistsObjs) {
-        userCreatedPlaylistIds.push(value.id);
+        userCreatedPlaylistIds.push(value['id']);
       }
 
       if (this.userCreatedBox) {
@@ -151,13 +155,13 @@ export default {
     },
 
     followedPlaylistsCheckBoxEvent() {
-      const allFollowedPlaylistIds = [];
-      const allFollowedPlaylistsObjs = this.allPlaylists.filter(
-        (item) => item.type == "ALL_FOLLOWED_PLAYLISTS"
+      const allFollowedPlaylistIds: string[] = [];
+      const allFollowedPlaylistsObjs = this.allPlaylistObjs.filter(
+        (item) => item['type'] == "ALL_FOLLOWED_PLAYLISTS"
       );
 
       for (let value of allFollowedPlaylistsObjs) {
-        allFollowedPlaylistIds.push(value.id);
+        allFollowedPlaylistIds.push(value['id']);
       }
 
       if (this.followedPlaylistsBox) {
@@ -176,9 +180,9 @@ export default {
     },
 
     AllAlbumsCheckBoxEvent() {
-      const allAlbumIds = [];
+      const allAlbumIds: string[] = [];
       for (let value of this.allAlbumObjs) {
-        allAlbumIds.push(value.id);
+        allAlbumIds.push(value['id']);
       }
 
       if (this.allAlbumsCheck) {
@@ -201,7 +205,7 @@ export default {
         albumsToAdd: this.checkedAlbums,
       };
       this.playlistUI = false;
-      const tokenObject = JSON.parse(localStorage.getItem("token"));
+      const tokenObject = JSON.parse(localStorage.getItem("token") || '{}');
       this.loadingScreen = true;
       this.newPlaylistId = (
         await axios.post(

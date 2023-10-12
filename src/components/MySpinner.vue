@@ -10,7 +10,7 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script>
 </script>
 <style scoped>
 </style>
