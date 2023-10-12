@@ -13,7 +13,7 @@
   </div>
 </template>
 <script lang="ts">
-import { PropType } from 'vue';
+import { PropType } from "vue";
 
 export default {
   props: {
