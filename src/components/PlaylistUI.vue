@@ -212,6 +212,7 @@ export default {
       ).data;
       this.loadingScreen = false;
       console.log(this.newPlaylistId);
+      this.playlistSelection = false;
       this.showIframe = true;
     },
   },
