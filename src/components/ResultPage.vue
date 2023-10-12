@@ -3,7 +3,7 @@
   <div>
     <iframe
       title="Spotify Embed: Recommendation Playlist "
-      :src="this.iframeUrl"
+      :src="iframeUrl"
       width="50%"
       height="500px"
       frameBorder="0"
@@ -12,11 +12,13 @@
     />
   </div>
 </template>
-<script>
+<script lang="ts">
+import { PropType } from 'vue';
+
 export default {
   props: {
     data: {
-      type: String,
+      type: String as PropType<string>,
       required: true,
     },
   },

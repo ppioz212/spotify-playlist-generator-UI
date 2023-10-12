@@ -5,13 +5,11 @@
 
 <script lang="ts">
 import axios from "axios";
-import { RouterView } from "vue-router";
 import MyMenuBar from "./components/MyMenuBar.vue";
 
 export default {
   components: {
     MyMenuBar,
-    RouterView,
   },
   data() {
     return {
