@@ -29,14 +29,16 @@
       <Checkbox
         v-model="userCreatedBox"
         :binary="true"
-        @change="userCreatedCheckBoxEvent()"
+        @change="playlistCheckBoxEvent('ALL_USER_CREATED', userCreatedBox)"
       />
       <label> User Created Playlists </label>
 
       <Checkbox
         v-model="followedPlaylistsBox"
         :binary="true"
-        @change="followedPlaylistsCheckBoxEvent()"
+        @change="
+          playlistCheckBoxEvent('ALL_FOLLOWED_PLAYLISTS', followedPlaylistsBox)
+        "
       />
       <label> Followed Playlists</label>
 
@@ -46,7 +48,7 @@
       <Checkbox
         v-model="allAlbumsCheck"
         :binary="true"
-        @change="AllAlbumsCheckBoxEvent()"
+        @change="allAlbumsCheckBoxEvent()"
       />
       <label> Select All </label>
     </div>
@@ -130,82 +132,32 @@ export default defineComponent({
   },
 
   methods: {
-    playlistCheckBoxEvent(aggregateType:string) {
-      const userCreatedPlaylistIds: string[] = [];
-      const userCreatedPlaylistsObjs = this.allPlaylistObjs.filter(
+    playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
+      const filteredPlaylistIds: string[] = [];
+      const filteredPlaylistObjs = this.allPlaylistObjs.filter(
         (item) => item["type"] == aggregateType
       );
 
-      for (let value of userCreatedPlaylistsObjs) {
-        userCreatedPlaylistIds.push(value["id"]);
+      for (let value of filteredPlaylistObjs) {
+        filteredPlaylistIds.push(value["id"]);
       }
 
-      if (this.userCreatedBox) {
-        for (let item of userCreatedPlaylistIds) {
+      if (checkbox) {
+        for (let item of filteredPlaylistIds) {
           if (!this.checkedPlaylists.includes(item)) {
             this.checkedPlaylists.push(item);
           }
         }
       }
 
-      if (!this.userCreatedBox) {
+      if (!checkbox) {
         this.checkedPlaylists = this.checkedPlaylists.filter(
-          (item) => !userCreatedPlaylistIds.includes(item)
+          (item) => !filteredPlaylistIds.includes(item)
         );
       }
     },
 
-    userCreatedCheckBoxEvent() {
-      const userCreatedPlaylistIds: string[] = [];
-      const userCreatedPlaylistsObjs = this.allPlaylistObjs.filter(
-        (item) => item["type"] == "ALL_USER_CREATED"
-      );
-
-      for (let value of userCreatedPlaylistsObjs) {
-        userCreatedPlaylistIds.push(value["id"]);
-      }
-
-      if (this.userCreatedBox) {
-        for (let item of userCreatedPlaylistIds) {
-          if (!this.checkedPlaylists.includes(item)) {
-            this.checkedPlaylists.push(item);
-          }
-        }
-      }
-
-      if (!this.userCreatedBox) {
-        this.checkedPlaylists = this.checkedPlaylists.filter(
-          (item) => !userCreatedPlaylistIds.includes(item)
-        );
-      }
-    },
-
-    followedPlaylistsCheckBoxEvent() {
-      const allFollowedPlaylistIds: string[] = [];
-      const allFollowedPlaylistsObjs = this.allPlaylistObjs.filter(
-        (item) => item["type"] == "ALL_FOLLOWED_PLAYLISTS"
-      );
-
-      for (let value of allFollowedPlaylistsObjs) {
-        allFollowedPlaylistIds.push(value["id"]);
-      }
-
-      if (this.followedPlaylistsBox) {
-        for (let item of allFollowedPlaylistIds) {
-          if (!this.checkedPlaylists.includes(item)) {
-            this.checkedPlaylists.push(item);
-          }
-        }
-      }
-
-      if (!this.followedPlaylistsBox) {
-        this.checkedPlaylists = this.checkedPlaylists.filter(
-          (item) => !allFollowedPlaylistIds.includes(item)
-        );
-      }
-    },
-
-    AllAlbumsCheckBoxEvent() {
+    allAlbumsCheckBoxEvent() {
       const allAlbumIds: string[] = [];
       for (let value of this.allAlbumObjs) {
         allAlbumIds.push(value["id"]);
