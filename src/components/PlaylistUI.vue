@@ -94,7 +94,7 @@ export default {
     return {
       inputValue: null,
       loadingScreen: false,
-      newPlaylistId: "",
+      newPlaylistId: "" as string,
       iframeUrl: "",
       playlistUI: true,
       showIframe: false,
