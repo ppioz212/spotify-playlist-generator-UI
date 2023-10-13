@@ -80,7 +80,6 @@
 </template>
 
 <script lang="ts">
-
 import axios from "axios";
 import MySpinner from "./MySpinner.vue";
 import ResultPage from "./ResultPage.vue";
