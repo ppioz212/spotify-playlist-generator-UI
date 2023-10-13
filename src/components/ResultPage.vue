@@ -14,8 +14,10 @@
 </template>
 <script lang="ts">
 import { PropType } from "vue";
+import { defineComponent } from 'vue'
 
-export default {
+
+export default defineComponent({
   props: {
     data: {
       type: String as PropType<string>,
@@ -33,7 +35,7 @@ export default {
       this.data +
       "?utm_source=generator&theme=0";
   },
-};
+});
 </script>
 <style scoped>
 </style>

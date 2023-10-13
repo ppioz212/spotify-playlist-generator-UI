@@ -6,14 +6,16 @@
 <script lang="ts">
 import axios from "axios";
 import MyMenuBar from "./components/MyMenuBar.vue";
+import { defineComponent } from 'vue'
 
-export default {
+
+export default defineComponent({
   components: {
     MyMenuBar,
   },
   data() {
     return {
-      code: "",
+      code: "" as string,
     };
   },
 
@@ -54,7 +56,7 @@ export default {
       localStorage.setItem("token", parsed);
     },
   },
-};
+});
 </script>
 
 <style>
