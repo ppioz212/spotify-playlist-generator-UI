@@ -80,6 +80,7 @@
 </template>
 
 <script lang="ts">
+
 import axios from "axios";
 import MySpinner from "./MySpinner.vue";
 import ResultPage from "./ResultPage.vue";
@@ -94,17 +95,17 @@ export default defineComponent({
   },
   data() {
     return {
-      inputValue: null,
-      loadingScreen: false,
-      newPlaylistId: "",
-      iframeUrl: "",
-      playlistUI: true,
-      showIframe: false,
-      userCreatedBox: false,
-      followedPlaylistsBox: false,
-      likedSongsBox: false,
-      playlistSelection: false,
-      allAlbumsCheck: false,
+      inputValue: "" as string,
+      loadingScreen: false as boolean,
+      newPlaylistId: "" as string,
+      iframeUrl: "" as string,
+      playlistUI: true as boolean,
+      showIframe: false as boolean,
+      userCreatedBox: false as boolean,
+      followedPlaylistsBox: false as boolean,
+      likedSongsBox: false as boolean,
+      playlistSelection: false as boolean,
+      allAlbumsCheck: false as boolean,
       checkedPlaylists: [] as string[],
       checkedAlbums: [] as string[],
       allAlbumObjs: [],

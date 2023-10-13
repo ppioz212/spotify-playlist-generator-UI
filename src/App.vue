@@ -4,10 +4,10 @@
 </template>
 
 <script lang="ts">
+
 import axios from "axios";
 import MyMenuBar from "./components/MyMenuBar.vue";
 import { defineComponent } from 'vue'
-
 
 export default defineComponent({
   components: {

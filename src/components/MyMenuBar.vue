@@ -19,8 +19,8 @@ export default {
     return {
       items: [
         {
-          label: "Home",
-          url: "http://localhost:3000",
+          label: "Home" as string,
+          url: "http://localhost:3000" as string,
         },
       ],
     };

@@ -15,14 +15,12 @@
   </div>
 </template>
 <script lang="ts">
-
 export default {
-  
   methods: {
     openAuthorizatonUrl() {
-      const clientId = "1dbfd19797084691bbd011cab62cb6a6";
-      const redirectUri = "http://localhost:3000";
-      const scope =
+      const clientId: string = "1dbfd19797084691bbd011cab62cb6a6";
+      const redirectUri: string = "http://localhost:3000";
+      const scope: string =
         "user-read-private%20" +
         "playlist-modify-private%20" +
         "playlist-modify-public%20" +
@@ -31,7 +29,7 @@ export default {
         "playlist-read-collaborative%20" +
         "playlist-read-private%20" +
         "user-library-read";
-      const AuthUrl =
+      const AuthUrl: string =
         "https://accounts.spotify.com/authorize?response_type=code" +
         "&client_id=" +
         clientId +
