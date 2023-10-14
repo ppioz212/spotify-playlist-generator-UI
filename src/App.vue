@@ -4,18 +4,16 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
 import MyMenuBar from "./components/MyMenuBar.vue";
 import { defineComponent } from "vue";
+import * as services from "./utils/services";
 
 export default defineComponent({
   components: {
     MyMenuBar,
   },
   data() {
-    return {
-      code: "" as string,
-    };
+    return {};
   },
 
   async mounted() {
@@ -33,27 +31,15 @@ export default defineComponent({
     } else {
       let urlParams = new URLSearchParams(window.location.search);
       console.log(urlParams.has("code"));
-      this.code = urlParams.get("code") || "";
-      if (this.code == "") {
+      const code = urlParams.get("code") || "";
+      if (code == "") {
         this.$router.push("/login");
       } else {
-        await this.getToken();
+        await services.getToken(code);
         //TODO: add logic here when getToken fails (due to error or server being down)
         this.$router.push("/playlist");
       }
     }
-  },
-
-  methods: {
-    async getToken() {
-      let accessTokenObject = (
-        await axios.post("http://localhost:8080/getAccessToken", this.code)
-      ).data;
-      let date = new Date();
-      accessTokenObject.timeGenerated = date.getTime() / 1000;
-      const parsed = JSON.stringify(accessTokenObject);
-      localStorage.setItem("token", parsed);
-    },
   },
 });
 </script>

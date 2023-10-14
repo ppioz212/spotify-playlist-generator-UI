@@ -80,10 +80,10 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
 import MySpinner from "./MySpinner.vue";
 import Checkbox from "primevue/checkbox";
 import { defineComponent } from "vue";
+import * as services from "../utils/services";
 
 export default defineComponent({
   components: {
@@ -109,19 +109,10 @@ export default defineComponent({
   },
 
   async mounted() {
-    const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-    this.allPlaylistObjs = (
-      await axios.get("http://localhost:8080/getPlaylists", {
-        headers: { Authorization: tokenObject.access_token },
-      })
-    ).data;
+    this.allPlaylistObjs = await services.getPlaylists();
     console.log(this.allPlaylistObjs);
 
-    this.allAlbumObjs = (
-      await axios.get("http://localhost:8080/getAlbums", {
-        headers: { Authorization: tokenObject.access_token },
-      })
-    ).data;
+    this.allAlbumObjs = await services.getAlbums();
     console.log(this.allAlbumObjs);
 
     this.playlistSelection = true;
@@ -179,16 +170,9 @@ export default defineComponent({
         albumsToAdd: this.checkedAlbums,
       };
       this.playlistUI = false;
-      const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
       this.playlistSelection = false;
       this.loadingScreen = true;
-      const newPlaylistId: string = (
-        await axios.post(
-          "http://localhost:8080/generateNewPlaylist",
-          playlistObject,
-          { headers: { Authorization: tokenObject.access_token } }
-        )
-      ).data;
+      const newPlaylistId: string = await services.generatePlaylist(playlistObject);
       this.loadingScreen = false;
       this.$router.push({ name: "results-page", params: { newPlaylistId } });
     },
