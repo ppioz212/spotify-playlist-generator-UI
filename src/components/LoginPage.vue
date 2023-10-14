@@ -45,14 +45,4 @@ export default {
 };
 </script>
 <style scoped>
-.mainmenu {
-  background: rgba(248, 249, 250, 255);
-  border-color: rgba(223, 225, 230, 255);
-  border-style: solid;
-  margin-top: 20px;
-  margin-right: 25%;
-  margin-left: 25%;
-  padding-bottom: 30px;
-  justify-content: center;
-}
 </style>

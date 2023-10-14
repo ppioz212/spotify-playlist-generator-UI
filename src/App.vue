@@ -4,10 +4,9 @@
 </template>
 
 <script lang="ts">
-
 import axios from "axios";
 import MyMenuBar from "./components/MyMenuBar.vue";
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue";
 
 export default defineComponent({
   components: {
@@ -69,6 +68,7 @@ export default defineComponent({
 }
 
 .mainmenu {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
   background: rgba(248, 249, 250, 255);
   border-color: rgba(223, 225, 230, 255);
   border-style: solid;

@@ -20,7 +20,7 @@ export default {
       items: [
         {
           label: "Home" as string,
-          url: "http://localhost:3000" as string,
+          url: "http://localhost:3000" as string, 
         },
       ],
     };

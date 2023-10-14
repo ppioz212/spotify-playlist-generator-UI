@@ -190,7 +190,7 @@ export default defineComponent({
         )
       ).data;
       this.loadingScreen = false;
-      this.$router.push({name: 'results-page', params: {newPlaylistId}})
+      this.$router.push({ name: "results-page", params: { newPlaylistId } });
     },
   },
 });
@@ -208,20 +208,5 @@ export default defineComponent({
   text-align: left;
   width: 350px;
   background: rgba(248, 249, 250, 255);
-}
-.mainmenu {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  background: rgba(248, 249, 250, 255);
-  border-color: rgba(223, 225, 230, 255);
-  border-style: solid;
-  margin-top: 20px;
-  margin-right: 25%;
-  margin-left: 25%;
-  padding-bottom: 30px;
-  justify-content: center;
-}
-
-.center {
-  width: 89%;
 }
 </style>
