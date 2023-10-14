@@ -71,12 +71,7 @@
       </div>
     </div>
   </div>
-  <div v-if="!playlistSelection">
-    <p>Loading Playlists and Albums</p>
-    <MySpinner />
-  </div>
-  <MySpinner v-if="loadingScreen" />
-  <!-- <ResultPage :data="newPlaylistId" v-if="showIframe" /> -->
+  <MySpinner :loading-message="loadingMessage" v-if="loadingScreen" />
 </template>
 
 <script lang="ts">
@@ -93,6 +88,7 @@ export default defineComponent({
   data() {
     return {
       inputValue: "" as string,
+      loadingMessage: "" as string,
       loadingScreen: false as boolean,
       newPlaylistId: "" as string,
       playlistUI: true as boolean,
@@ -109,12 +105,14 @@ export default defineComponent({
   },
 
   async mounted() {
+    this.loadingScreen = true;
+    this.loadingMessage = 'Loading Playlists and Albums...'
     this.allPlaylistObjs = await services.getPlaylists();
     console.log(this.allPlaylistObjs);
 
     this.allAlbumObjs = await services.getAlbums();
     console.log(this.allAlbumObjs);
-
+    this.loadingScreen = false;
     this.playlistSelection = true;
   },
 
@@ -172,6 +170,7 @@ export default defineComponent({
       this.playlistUI = false;
       this.playlistSelection = false;
       this.loadingScreen = true;
+      this.loadingMessage = 'Generating Playlist...'
       const newPlaylistId: string = await services.generatePlaylist(playlistObject);
       this.loadingScreen = false;
       this.$router.push({ name: "results-page", params: { newPlaylistId } });
