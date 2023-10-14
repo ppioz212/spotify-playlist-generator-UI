@@ -13,16 +13,10 @@
   </div>
 </template>
 <script lang="ts">
-import { PropType } from "vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    data: {
-      type: String as PropType<string>,
-      required: true,
-    },
-  },
+  
   data() {
     return {
       iframeUrl: "",
@@ -31,7 +25,7 @@ export default defineComponent({
   mounted() {
     this.iframeUrl =
       "https://open.spotify.com/embed/playlist/" +
-      this.data +
+      this.$route.params.newPlaylistId +
       "?utm_source=generator&theme=0";
   },
 });

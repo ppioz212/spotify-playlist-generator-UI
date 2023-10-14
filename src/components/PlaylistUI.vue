@@ -76,20 +76,18 @@
     <MySpinner />
   </div>
   <MySpinner v-if="loadingScreen" />
-  <ResultPage :data="newPlaylistId" v-if="showIframe" />
+  <!-- <ResultPage :data="newPlaylistId" v-if="showIframe" /> -->
 </template>
 
 <script lang="ts">
 import axios from "axios";
 import MySpinner from "./MySpinner.vue";
-import ResultPage from "./ResultPage.vue";
 import Checkbox from "primevue/checkbox";
 import { defineComponent } from "vue";
 
 export default defineComponent({
   components: {
     MySpinner,
-    ResultPage,
     Checkbox,
   },
   data() {
@@ -97,9 +95,7 @@ export default defineComponent({
       inputValue: "" as string,
       loadingScreen: false as boolean,
       newPlaylistId: "" as string,
-      iframeUrl: "" as string,
       playlistUI: true as boolean,
-      showIframe: false as boolean,
       userCreatedBox: false as boolean,
       followedPlaylistsBox: false as boolean,
       likedSongsBox: false as boolean,
@@ -184,8 +180,9 @@ export default defineComponent({
       };
       this.playlistUI = false;
       const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+      this.playlistSelection = false;
       this.loadingScreen = true;
-      this.newPlaylistId = (
+      const newPlaylistId: string = (
         await axios.post(
           "http://localhost:8080/generateNewPlaylist",
           playlistObject,
@@ -193,9 +190,7 @@ export default defineComponent({
         )
       ).data;
       this.loadingScreen = false;
-      console.log(this.newPlaylistId);
-      this.playlistSelection = false;
-      this.showIframe = true;
+      this.$router.push({name: 'results-page', params: {newPlaylistId}})
     },
   },
 });
@@ -211,8 +206,6 @@ export default defineComponent({
 }
 .selectionElement {
   text-align: left;
-  display: flex;
-  flex-direction: column;
   width: 350px;
   background: rgba(248, 249, 250, 255);
 }
