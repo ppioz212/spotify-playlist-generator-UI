@@ -30,7 +30,6 @@ export default defineComponent({
       this.$router.push("/playlist");
     } else {
       let urlParams = new URLSearchParams(window.location.search);
-      console.log(urlParams.has("code"));
       const code = urlParams.get("code") || "";
       if (code == "") {
         this.$router.push("/login");
@@ -63,8 +62,5 @@ export default defineComponent({
   margin-left: 25%;
   padding-bottom: 30px;
   justify-content: center;
-}
-.center {
-  width: 89%;
 }
 </style>

@@ -34,7 +34,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .menubar {
   background: white;
   border: none;

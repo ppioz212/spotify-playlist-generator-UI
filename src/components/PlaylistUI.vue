@@ -5,7 +5,7 @@
       <div class="card flex justify-content-center">
         <span class="p-float-label">
           <InputText id="playlistname" v-model="inputValue" />
-          <label class="center" for="playlistname">Name of Playlist</label>
+          <label class="centerInputText" for="playlistname">Name of Playlist</label>
         </span>
       </div>
       <p style="margin-bottom: 0px">
@@ -19,7 +19,6 @@
       />
     </div>
   </div>
-
   <div v-if="playlistSelection">
     <div>
       Selected Playlists: {{ checkedPlaylists.length }} Selected Albums:
@@ -50,7 +49,7 @@
         :binary="true"
         @change="allAlbumsCheckBoxEvent()"
       />
-      <label> Select All </label>
+      <label> Select All Albums </label>
     </div>
     <div class="selectionParent" v-if="playlistSelection">
       <div class="selectionElement">
@@ -71,7 +70,7 @@
       </div>
     </div>
   </div>
-  <MySpinner :loading-message="loadingMessage" v-if="loadingScreen" />
+  <MySpinner :loading-message="loadingMessage" v-show="loadingScreen" />
 </template>
 
 <script lang="ts">
@@ -87,10 +86,9 @@ export default defineComponent({
   },
   data() {
     return {
-      inputValue: "" as string,
+      inputValue: "test" as string,
       loadingMessage: "" as string,
-      loadingScreen: false as boolean,
-      newPlaylistId: "" as string,
+      loadingScreen: true as boolean,
       playlistUI: true as boolean,
       userCreatedBox: false as boolean,
       followedPlaylistsBox: false as boolean,
@@ -105,15 +103,16 @@ export default defineComponent({
   },
 
   async mounted() {
-    this.loadingScreen = true;
     this.loadingMessage = 'Loading Playlists and Albums...'
     this.allPlaylistObjs = await services.getPlaylists();
-    console.log(this.allPlaylistObjs);
+    console.log('Number of playlists returned: ' + this.allPlaylistObjs.length);
+    console.log(this.allPlaylistObjs)
 
     this.allAlbumObjs = await services.getAlbums();
-    console.log(this.allAlbumObjs);
     this.loadingScreen = false;
     this.playlistSelection = true;
+    console.log('Number of albums returned: ' + this.allAlbumObjs.length);
+    console.log(this.allAlbumObjs)
   },
 
   methods: {
@@ -169,10 +168,9 @@ export default defineComponent({
       };
       this.playlistUI = false;
       this.playlistSelection = false;
-      this.loadingScreen = true;
       this.loadingMessage = 'Generating Playlist...'
+      this.loadingScreen = true;
       const newPlaylistId: string = await services.generatePlaylist(playlistObject);
-      this.loadingScreen = false;
       this.$router.push({ name: "results-page", params: { newPlaylistId } });
     },
   },
@@ -181,6 +179,9 @@ export default defineComponent({
 <style scoped>
 .button {
   margin: 5px;
+}
+.centerInputText {
+  width: 89%;
 }
 .selectionParent {
   margin-right: 25%;
