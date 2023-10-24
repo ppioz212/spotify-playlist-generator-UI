@@ -12,21 +12,17 @@
     />
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
 
-export default defineComponent({
-  data() {
-    return {
-      iframeUrl: "",
-    };
-  },
-  mounted() {
-    this.iframeUrl =
-      "https://open.spotify.com/embed/playlist/" +
-      this.$route.params.newPlaylistId +
-      "?utm_source=generator&theme=0";
-  },
+const route = useRoute();
+const iframeUrl = ref();
+onMounted(() => {
+  iframeUrl.value =
+    "https://open.spotify.com/embed/playlist/" +
+    route.params.newPlaylistId +
+    "?utm_source=generator&theme=0";
 });
 </script>
 <style scoped>

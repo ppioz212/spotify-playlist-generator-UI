@@ -86,7 +86,7 @@ export default defineComponent({
   },
   data() {
     return {
-      inputValue: "test" as string,
+      inputValue: "tes" as string,
       loadingMessage: "" as string,
       loadingScreen: true as boolean,
       playlistUI: true as boolean,
