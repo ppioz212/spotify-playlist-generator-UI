@@ -17,7 +17,7 @@ export async function getPlaylists() {
       headers: { Authorization: tokenObject.access_token },
     })
   ).data;
-    return allPlaylistObjs;
+  return allPlaylistObjs;
 }
 
 export async function getAlbums() {
@@ -31,13 +31,13 @@ export async function getAlbums() {
 }
 
 export async function generatePlaylist(playlistObject: Object) {
-    const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-    const newPlaylistId: string = (
-        await axios.post(
-          "http://localhost:8080/generateNewPlaylist",
-          playlistObject,
-          { headers: { Authorization: tokenObject.access_token } }
-        )
-      ).data;
-    return newPlaylistId;
+  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  const newPlaylistId: string = (
+    await axios.post(
+      "http://localhost:8080/generateNewPlaylist",
+      playlistObject,
+      { headers: { Authorization: tokenObject.access_token } }
+    )
+  ).data;
+  return newPlaylistId;
 }
