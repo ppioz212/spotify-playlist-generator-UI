@@ -14,35 +14,32 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-export default {
-  methods: {
-    openAuthorizatonUrl() {
-      const clientId: string = "1dbfd19797084691bbd011cab62cb6a6";
-      const redirectUri: string = "http://localhost:3000";
-      const scope: string =
-        "user-read-private%20" +
-        "playlist-modify-private%20" +
-        "playlist-modify-public%20" +
-        "user-library-read%20" +
-        "user-read-email%20" +
-        "playlist-read-collaborative%20" +
-        "playlist-read-private%20" +
-        "user-library-read";
-      const AuthUrl: string =
-        "https://accounts.spotify.com/authorize?response_type=code" +
-        "&client_id=" +
-        clientId +
-        "&scope=" +
-        scope +
-        "&redirect_uri=" +
-        redirectUri;
-      // + "&show_dialog=true";  // Use for proper usage of application to allow logging in and out easily
+<script setup lang="ts">
 
-      window.open(AuthUrl, "_self", "noreferrer");
-    },
-  },
-};
+function openAuthorizatonUrl() {
+  const clientId: string = "1dbfd19797084691bbd011cab62cb6a6";
+  const redirectUri: string = "http://localhost:3000";
+  const scope: string =
+    "user-read-private%20" +
+    "playlist-modify-private%20" +
+    "playlist-modify-public%20" +
+    "user-library-read%20" +
+    "user-read-email%20" +
+    "playlist-read-collaborative%20" +
+    "playlist-read-private%20" +
+    "user-library-read";
+  const AuthUrl: string =
+    "https://accounts.spotify.com/authorize?response_type=code" +
+    "&client_id=" +
+    clientId +
+    "&scope=" +
+    scope +
+    "&redirect_uri=" +
+    redirectUri;
+  // + "&show_dialog=true";  // Use for proper usage of application to allow logging in and out easily
+
+  window.open(AuthUrl, "_self", "noreferrer");
+}
 </script>
 <style scoped>
 </style>

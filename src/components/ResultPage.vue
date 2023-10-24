@@ -17,7 +17,7 @@ import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 
 const route = useRoute();
-const iframeUrl = ref();
+const iframeUrl = ref<string>();
 onMounted(() => {
   iframeUrl.value =
     "https://open.spotify.com/embed/playlist/" +
