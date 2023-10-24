@@ -13,26 +13,20 @@
     </template>
   </Menubar>
 </template>
-<script lang="ts">
-export default {
-  data() {
-    return {
-      items: [
-        {
-          label: "Home" as string,
-          url: "http://localhost:3000" as string, 
-        },
-      ],
-    };
-  },
+<script setup lang="ts">
+import { reactive } from "vue";
 
-  methods: {
-    logout() {
-      localStorage.removeItem("token");
-      window.location.href = "http://localhost:3000";
-    },
+const items = reactive([
+  {
+    label: "Home" as string,
+    url: "http://localhost:3000" as string,
   },
-};
+]);
+
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "http://localhost:3000";
+}
 </script>
 <style scoped>
 .menubar {

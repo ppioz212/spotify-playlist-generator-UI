@@ -15,7 +15,6 @@
   </div>
 </template>
 <script setup lang="ts">
-
 function openAuthorizatonUrl() {
   const clientId: string = "1dbfd19797084691bbd011cab62cb6a6";
   const redirectUri: string = "http://localhost:3000";

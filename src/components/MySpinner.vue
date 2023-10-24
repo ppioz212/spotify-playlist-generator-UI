@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row justify-content-md-center" style="margin-top: 5px">
-      <p>{{ loadingMessage }}</p>
+      <p>{{ props.loadingMessage }}</p>
       <ProgressSpinner
         strokeWidth="4"
         fill="var(--surface-ground)"
@@ -11,16 +11,13 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
-import { PropType } from "vue";
+<script setup lang="ts">
+import { defineProps } from "vue";
 
-export default defineComponent({
-  props: {
-    loadingMessage: {
-      type: String as PropType<string>,
-      required: false,
-    },
+const props = defineProps({
+  loadingMessage: {
+    type: String,
+    required: false,
   },
 });
 </script>
