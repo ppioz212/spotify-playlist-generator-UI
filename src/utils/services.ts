@@ -1,5 +1,15 @@
 import axios from "axios";
 
+export async function getUser() {
+  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  const User = (
+    await axios.get("http://localhost:8080/getUser", {
+      headers: { Authorization: tokenObject.access_token },
+    })
+  ).data;
+  return User;
+}
+
 export async function getToken(code: string) {
   const accessTokenObject = (
     await axios.post("http://localhost:8080/getAccessToken", code)

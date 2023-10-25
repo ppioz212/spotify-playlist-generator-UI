@@ -5,7 +5,9 @@
       <div class="card flex justify-content-center">
         <span class="p-float-label">
           <InputText id="playlistname" v-model="inputValue" />
-          <label class="centerInputText" for="playlistname">Name of Playlist</label>
+          <label class="centerInputText" for="playlistname"
+            >Name of Playlist</label
+          >
         </span>
       </div>
       <p style="margin-bottom: 0px">
@@ -28,16 +30,14 @@
       <Checkbox
         v-model="userCreatedBox"
         :binary="true"
-        @change="playlistCheckBoxEvent('ALL_USER_CREATED', userCreatedBox)"
+        @change="playlistCheckBoxEvent('UserCreated', userCreatedBox)"
       />
       <label> User Created Playlists </label>
 
       <Checkbox
         v-model="followedPlaylistsBox"
         :binary="true"
-        @change="
-          playlistCheckBoxEvent('ALL_FOLLOWED_PLAYLISTS', followedPlaylistsBox)
-        "
+        @change="playlistCheckBoxEvent('NotUserCreated', followedPlaylistsBox)"
       />
       <label> Followed Playlists</label>
 
@@ -56,7 +56,7 @@
         <div v-for="playlist in allPlaylistObjs" :key="playlist['id']">
           <Checkbox v-model="checkedPlaylists" :value="playlist['id']" />
           <label style="margin-left: 5px">
-            {{ playlist["name"] }} by {{ playlist["owner"] }}
+            {{ playlist["name"] }} by {{ playlist["owner"]["displayName"] }}
           </label>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default defineComponent({
       inputValue: "tes" as string,
       loadingMessage: "" as string,
       loadingScreen: true as boolean,
-      playlistUI: true as boolean,
+      playlistUI: false as boolean,
       userCreatedBox: false as boolean,
       followedPlaylistsBox: false as boolean,
       likedSongsBox: false as boolean,
@@ -99,28 +99,38 @@ export default defineComponent({
       checkedAlbums: [] as string[],
       allAlbumObjs: [],
       allPlaylistObjs: [],
+      user: { id: String, display_name: String },
     };
   },
 
   async mounted() {
-    this.loadingMessage = 'Loading Playlists and Albums...'
+    this.loadingMessage = "Loading Playlists and Albums...";
+    this.user = await services.getUser();
     this.allPlaylistObjs = await services.getPlaylists();
-    console.log('Number of playlists returned: ' + this.allPlaylistObjs.length);
-    console.log(this.allPlaylistObjs)
+    console.log("Number of playlists returned: " + this.allPlaylistObjs.length);
+    console.log(this.allPlaylistObjs);
 
     this.allAlbumObjs = await services.getAlbums();
     this.loadingScreen = false;
+    this.playlistUI = true;
     this.playlistSelection = true;
-    console.log('Number of albums returned: ' + this.allAlbumObjs.length);
-    console.log(this.allAlbumObjs)
+    console.log("Number of albums returned: " + this.allAlbumObjs.length);
+    console.log(this.allAlbumObjs);
   },
 
   methods: {
     playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
       const filteredPlaylistIds: string[] = [];
-      const filteredPlaylistObjs = this.allPlaylistObjs.filter(
-        (item) => item["type"] == aggregateType
-      );
+      let filteredPlaylistObjs = [];
+      if (aggregateType == "UserCreated") {
+        filteredPlaylistObjs = this.allPlaylistObjs.filter(
+          (item) => item["owner"]["id"] == this.user["id"]
+        );
+      } else {
+        filteredPlaylistObjs = this.allPlaylistObjs.filter(
+          (item) => item["owner"]["id"] != this.user["id"]
+        );
+      }
 
       for (let value of filteredPlaylistObjs) {
         filteredPlaylistIds.push(value["id"]);
@@ -168,9 +178,11 @@ export default defineComponent({
       };
       this.playlistUI = false;
       this.playlistSelection = false;
-      this.loadingMessage = 'Generating Playlist...'
+      this.loadingMessage = "Generating Playlist...";
       this.loadingScreen = true;
-      const newPlaylistId: string = await services.generatePlaylist(playlistObject);
+      const newPlaylistId: string = await services.generatePlaylist(
+        playlistObject
+      );
       this.$router.push({ name: "results-page", params: { newPlaylistId } });
     },
   },

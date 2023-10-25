@@ -12,9 +12,6 @@ export default defineComponent({
   components: {
     MyMenuBar,
   },
-  data() {
-    return {};
-  },
 
   async mounted() {
     let doesTokenExist = false;
