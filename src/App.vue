@@ -3,41 +3,37 @@
   <router-view></router-view>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import MyMenuBar from "./components/MyMenuBar.vue";
-import { defineComponent } from "vue";
 import * as services from "./utils/services";
+import { useRouter } from "vue-router";
 
-export default defineComponent({
-  components: {
-    MyMenuBar,
-  },
-
-  async mounted() {
-    let doesTokenExist = false;
-    if (localStorage.getItem("token") != null) {
-      doesTokenExist = true;
-    }
-    let tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-    let date = new Date();
-    if (
-      doesTokenExist &&
-      date.getTime() / 1000 < tokenObject.timeGenerated + tokenObject.expires_in
-    ) {
-      this.$router.push("/playlist");
+const router = useRouter();
+appMain();
+async function appMain() {
+  let doesTokenExist = false;
+  if (localStorage.getItem("token") != null) {
+    doesTokenExist = true;
+  }
+  let tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  let date = new Date();
+  if (
+    doesTokenExist &&
+    date.getTime() / 1000 < tokenObject.timeGenerated + tokenObject.expires_in
+  ) {
+    router.push("/playlist");
+  } else {
+    let urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code") || "";
+    if (code == "") {
+      router.push("/login");
     } else {
-      let urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get("code") || "";
-      if (code == "") {
-        this.$router.push("/login");
-      } else {
-        await services.getToken(code);
-        //TODO: add logic here when getToken fails (due to error or server being down)
-        this.$router.push("/playlist");
-      }
+      await services.getToken(code);
+      //TODO: add logic here when getToken fails (due to error or server being down)
+      router.push("/playlist");
     }
-  },
-});
+  }
+}
 </script>
 
 <style>
