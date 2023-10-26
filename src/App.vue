@@ -9,8 +9,9 @@ import * as services from "./utils/services";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-appMain();
-async function appMain() {
+main();
+//random comment to test new branch
+async function main() {
   let doesTokenExist = false;
   if (localStorage.getItem("token") != null) {
     doesTokenExist = true;
