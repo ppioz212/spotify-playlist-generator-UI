@@ -6,11 +6,7 @@
         Please login with your spotify account to generate the playlist of your
         choosing
       </p>
-      <Button
-        label="Login with Spotify"
-        style="margin: 5px"
-        @click="openAuthorizatonUrl()"
-      />
+      <Button label="Login with Spotify" style="margin: 5px" @click="openAuthorizatonUrl()" />
     </div>
   </div>
 </template>
@@ -40,5 +36,4 @@ function openAuthorizatonUrl() {
   window.open(AuthUrl, "_self", "noreferrer");
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>

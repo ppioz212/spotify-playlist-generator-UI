@@ -5,20 +5,14 @@
       <div class="card flex justify-content-center">
         <span class="p-float-label">
           <InputText id="playlistname" v-model="inputValue" />
-          <label class="centerInputText" for="playlistname"
-            >Name of Playlist</label
-          >
+          <label class="centerInputText" for="playlistname">Name of Playlist</label>
         </span>
       </div>
       <p style="margin-bottom: 0px">
         Select what Playlists/Albums you'd like to include:
       </p>
       <p style="margin-top: 0px">(You must select at least one item)</p>
-      <Button
-        class="button"
-        label="Generate Playlist"
-        @click="generatePlaylist()"
-      />
+      <Button class="button" label="Generate Playlist" @click="generatePlaylist()" />
     </div>
   </div>
   <div v-if="playlistSelection">
@@ -27,28 +21,17 @@
       {{ checkedAlbums.length }}
     </div>
     <div style="display: flexbox">
-      <Checkbox
-        v-model="userCreatedBox"
-        :binary="true"
-        @change="playlistCheckBoxEvent('UserCreated', userCreatedBox)"
-      />
+      <Checkbox v-model="userCreatedBox" :binary="true" @change="playlistCheckBoxEvent('UserCreated', userCreatedBox)" />
       <label> User Created Playlists </label>
 
-      <Checkbox
-        v-model="followedPlaylistsBox"
-        :binary="true"
-        @change="playlistCheckBoxEvent('NotUserCreated', followedPlaylistsBox)"
-      />
+      <Checkbox v-model="followedPlaylistsBox" :binary="true"
+        @change="playlistCheckBoxEvent('NotUserCreated', followedPlaylistsBox)" />
       <label> Followed Playlists</label>
 
       <Checkbox v-model="likedSongsBox" :binary="true" />
       <label> Liked Songs</label>
 
-      <Checkbox
-        v-model="allAlbumsCheck"
-        :binary="true"
-        @change="allAlbumsCheckBoxEvent()"
-      />
+      <Checkbox v-model="allAlbumsCheck" :binary="true" @change="allAlbumsCheckBoxEvent()" />
       <label> Select All Albums </label>
     </div>
     <div class="selectionParent" v-if="playlistSelection">
@@ -192,14 +175,17 @@ export default defineComponent({
 .button {
   margin: 5px;
 }
+
 .centerInputText {
   width: 89%;
 }
+
 .selectionParent {
   margin-right: 25%;
   margin-left: 25%;
   display: flex;
 }
+
 .selectionElement {
   text-align: left;
   width: 350px;

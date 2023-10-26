@@ -2,12 +2,8 @@
   <div class="container">
     <div class="row justify-content-md-center" style="margin-top: 5px">
       <p>{{ props.loadingMessage }}</p>
-      <ProgressSpinner
-        strokeWidth="4"
-        fill="var(--surface-ground)"
-        animationDuration="1.5s"
-        aria-label="Custom ProgressSpinner"
-      />
+      <ProgressSpinner strokeWidth="4" fill="var(--surface-ground)" animationDuration="1.5s"
+        aria-label="Custom ProgressSpinner" />
     </div>
   </div>
 </template>
@@ -21,5 +17,4 @@ const props = defineProps({
   },
 });
 </script>
-<style scoped>
-</style>
+<style scoped></style>

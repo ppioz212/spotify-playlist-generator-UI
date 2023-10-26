@@ -1,12 +1,7 @@
 <template>
   <Menubar :model="items" class="menubar">
     <template #start>
-      <img
-        alt="logo"
-        src="../assets/spotify_logo_alt.png"
-        height="40"
-        class="mr-2"
-      />
+      <img alt="logo" src="../assets/spotify_logo_alt.png" height="40" class="mr-2" />
     </template>
     <template #end>
       <Button label="Logout" severity="danger" @click="logout()" />
