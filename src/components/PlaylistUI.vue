@@ -92,14 +92,14 @@ function playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
     );
   }
 
-  for (let value of filteredPlaylistObjs) {
-    filteredPlaylistIds.push(value["id"]);
+  for (let playlistObj of filteredPlaylistObjs) {
+    filteredPlaylistIds.push(playlistObj["id"]);
   }
 
   if (checkbox) {
-    for (let item of filteredPlaylistIds) {
-      if (!checkedPlaylists.value.includes(item)) {
-        checkedPlaylists.value.push(item);
+    for (let playlistId of filteredPlaylistIds) {
+      if (!checkedPlaylists.value.includes(playlistId)) {
+        checkedPlaylists.value.push(playlistId);
       }
     }
   }
@@ -113,14 +113,14 @@ function playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
 
 function allAlbumsCheckBoxEvent() {
   const allAlbumIds: string[] = [];
-  for (let value of allAlbumObjs.value) {
-    allAlbumIds.push(value["id"]);
+  for (let albumObj of allAlbumObjs.value) {
+    allAlbumIds.push(albumObj["id"]);
   }
 
   if (allAlbumsCheck.value) {
-    for (let item of allAlbumIds) {
-      if (!checkedAlbums.value.includes(item)) {
-        checkedAlbums.value.push(item);
+    for (let albumId of allAlbumIds) {
+      if (!checkedAlbums.value.includes(albumId)) {
+        checkedAlbums.value.push(albumId);
       }
     }
   }
