@@ -10,7 +10,6 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 main();
-//random comment to test new branch
 async function main() {
   let doesTokenExist = false;
   if (localStorage.getItem("token") != null) {

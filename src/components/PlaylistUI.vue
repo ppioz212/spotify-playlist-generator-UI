@@ -25,7 +25,7 @@
       <label> User Created Playlists </label>
 
       <Checkbox v-model="followedPlaylistsBox" :binary="true"
-        @change="playlistCheckBoxEvent('NotUserCreated', followedPlaylistsBox)" />
+        @change="playlistCheckBoxEvent('Followed', followedPlaylistsBox)" />
       <label> Followed Playlists</label>
 
       <Checkbox v-model="likedSongsBox" :binary="true" />
@@ -56,120 +56,111 @@
   <MySpinner :loading-message="loadingMessage" v-show="loadingScreen" />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import MySpinner from "./MySpinner.vue";
 import Checkbox from "primevue/checkbox";
-import { defineComponent } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import * as services from "../utils/services";
+import { useRouter } from "vue-router";
 
-export default defineComponent({
-  components: {
-    MySpinner,
-    Checkbox,
-  },
-  data() {
-    return {
-      inputValue: "tes" as string,
-      loadingMessage: "" as string,
-      loadingScreen: true as boolean,
-      playlistUI: false as boolean,
-      userCreatedBox: false as boolean,
-      followedPlaylistsBox: false as boolean,
-      likedSongsBox: false as boolean,
-      playlistSelection: false as boolean,
-      allAlbumsCheck: false as boolean,
-      checkedPlaylists: [] as string[],
-      checkedAlbums: [] as string[],
-      allAlbumObjs: [],
-      allPlaylistObjs: [],
-      user: { id: String, display_name: String },
-    };
-  },
+const inputValue = ref<string>("tes");
+const loadingMessage = ref<string>("Loading Playlists and Albums...");
+const loadingScreen = ref<boolean>(true);
+const playlistUI = ref<boolean>(false);
+const userCreatedBox = ref<boolean>(false);
+const followedPlaylistsBox = ref<boolean>(false);
+const likedSongsBox = ref<boolean>(false);
+const playlistSelection = ref<boolean>(false);
+const allAlbumsCheck = ref<boolean>(false);
+const checkedPlaylists = ref<string[]>([]);
+const checkedAlbums = ref<string[]>([]);
+const allAlbumObjs = ref([]);
+const allPlaylistObjs = ref([]);
+const user = reactive({ id: String, display_name: String });
+const router = useRouter()
 
-  async mounted() {
-    this.loadingMessage = "Loading Playlists and Albums...";
-    this.user = await services.getUser();
-    this.allPlaylistObjs = await services.getPlaylists();
-    console.log("Number of playlists returned: " + this.allPlaylistObjs.length);
-    console.log(this.allPlaylistObjs);
+function playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
+  const filteredPlaylistIds: string[] = [];
+  let filteredPlaylistObjs = [];
+  if (aggregateType == "UserCreated") {
+    filteredPlaylistObjs = allPlaylistObjs.value.filter(
+      (item) => item["owner"]["id"] == user.id
+    );
+  } else {
+    filteredPlaylistObjs = allPlaylistObjs.value.filter(
+      (item) => item["owner"]["id"] != user.id
+    );
+  }
 
-    this.allAlbumObjs = await services.getAlbums();
-    this.loadingScreen = false;
-    this.playlistUI = true;
-    this.playlistSelection = true;
-    console.log("Number of albums returned: " + this.allAlbumObjs.length);
-    console.log(this.allAlbumObjs);
-  },
+  for (let value of filteredPlaylistObjs) {
+    filteredPlaylistIds.push(value["id"]);
+  }
 
-  methods: {
-    playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
-      const filteredPlaylistIds: string[] = [];
-      let filteredPlaylistObjs = [];
-      if (aggregateType == "UserCreated") {
-        filteredPlaylistObjs = this.allPlaylistObjs.filter(
-          (item) => item["owner"]["id"] == this.user["id"]
-        );
-      } else {
-        filteredPlaylistObjs = this.allPlaylistObjs.filter(
-          (item) => item["owner"]["id"] != this.user["id"]
-        );
+  if (checkbox) {
+    for (let item of filteredPlaylistIds) {
+      if (!checkedPlaylists.value.includes(item)) {
+        checkedPlaylists.value.push(item);
       }
+    }
+  }
 
-      for (let value of filteredPlaylistObjs) {
-        filteredPlaylistIds.push(value["id"]);
-      }
+  if (!checkbox) {
+    checkedPlaylists.value = checkedPlaylists.value.filter(
+      (item) => !filteredPlaylistIds.includes(item)
+    );
+  }
+}
 
-      if (checkbox) {
-        for (let item of filteredPlaylistIds) {
-          if (!this.checkedPlaylists.includes(item)) {
-            this.checkedPlaylists.push(item);
-          }
-        }
-      }
+function allAlbumsCheckBoxEvent() {
+  const allAlbumIds: string[] = [];
+  for (let value of allAlbumObjs.value) {
+    allAlbumIds.push(value["id"]);
+  }
 
-      if (!checkbox) {
-        this.checkedPlaylists = this.checkedPlaylists.filter(
-          (item) => !filteredPlaylistIds.includes(item)
-        );
+  if (allAlbumsCheck.value) {
+    for (let item of allAlbumIds) {
+      if (!checkedAlbums.value.includes(item)) {
+        checkedAlbums.value.push(item);
       }
-    },
+    }
+  }
+  if (!allAlbumsCheck.value) {
+    checkedAlbums.value = [];
+  }
+}
 
-    allAlbumsCheckBoxEvent() {
-      const allAlbumIds: string[] = [];
-      for (let value of this.allAlbumObjs) {
-        allAlbumIds.push(value["id"]);
-      }
+async function generatePlaylist() {
+  const playlistObject = {
+    nameOfPlaylist: inputValue.value,
+    playlistsToAdd: checkedPlaylists.value,
+    addLikedSongs: likedSongsBox.value,
+    albumsToAdd: checkedAlbums.value,
+  };
+  playlistUI.value = false;
+  playlistSelection.value = false;
+  loadingMessage.value = "Generating Playlist...";
+  loadingScreen.value = true;
+  const newPlaylistId: string = await services.generatePlaylist(
+    playlistObject
+  );
+  router.push({ name: "results-page", params: { newPlaylistId } });
+}
 
-      if (this.allAlbumsCheck) {
-        for (let item of allAlbumIds) {
-          if (!this.checkedAlbums.includes(item)) {
-            this.checkedAlbums.push(item);
-          }
-        }
-      }
-      if (!this.allAlbumsCheck) {
-        this.checkedAlbums = [];
-      }
-    },
+onMounted(async () => {
+  const userObj = await services.getUser()
+  user.id = userObj.id;
+  user.display_name = userObj.display_name;
+  allPlaylistObjs.value = await services.getPlaylists();
+  console.log("Number of playlists returned: " + allPlaylistObjs.value.length);
+  console.log(allPlaylistObjs.value);
 
-    async generatePlaylist() {
-      const playlistObject = {
-        nameOfPlaylist: this.inputValue,
-        playlistsToAdd: this.checkedPlaylists,
-        addLikedSongs: this.likedSongsBox,
-        albumsToAdd: this.checkedAlbums,
-      };
-      this.playlistUI = false;
-      this.playlistSelection = false;
-      this.loadingMessage = "Generating Playlist...";
-      this.loadingScreen = true;
-      const newPlaylistId: string = await services.generatePlaylist(
-        playlistObject
-      );
-      this.$router.push({ name: "results-page", params: { newPlaylistId } });
-    },
-  },
-});
+  allAlbumObjs.value = await services.getAlbums();
+  loadingScreen.value = false;
+  playlistUI.value = true;
+  playlistSelection.value = true;
+  console.log("Number of albums returned: " + allAlbumObjs.value.length);
+  console.log(allAlbumObjs.value);
+})
 </script>
 <style scoped>
 .button {
