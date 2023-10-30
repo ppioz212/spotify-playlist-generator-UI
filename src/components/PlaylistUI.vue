@@ -15,7 +15,7 @@
       <Button class="button" label="Generate Playlist" @click="generatePlaylist()" />
     </div>
   </div>
-  <div v-if="playlistSelection">
+  <div v-if="playlistUI">
     <div>
       Selected Playlists: {{ checkedPlaylists.length }} Selected Albums:
       {{ checkedAlbums.length }}
@@ -34,7 +34,7 @@
       <Checkbox v-model="allAlbumsCheck" :binary="true" @change="allAlbumsCheckBoxEvent()" />
       <label> Select All Albums </label>
     </div>
-    <div class="selectionParent" v-if="playlistSelection">
+    <div class="selectionParent" v-if="playlistUI">
       <div class="selectionElement">
         <div v-for="playlist in allPlaylistObjs" :key="playlist['id']">
           <Checkbox v-model="checkedPlaylists" :value="playlist['id']" />
@@ -63,22 +63,15 @@ import { ref, onMounted, reactive } from "vue";
 import * as services from "../utils/services";
 import { useRouter } from "vue-router";
 
-const inputValue = ref<string>("tes");
+const router = useRouter()
+
 const loadingMessage = ref<string>("Loading Playlists and Albums...");
 const loadingScreen = ref<boolean>(true);
 const playlistUI = ref<boolean>(false);
+const playlistSelection = ref<boolean>(false);
+
 const userCreatedBox = ref<boolean>(false);
 const followedPlaylistsBox = ref<boolean>(false);
-const likedSongsBox = ref<boolean>(false);
-const playlistSelection = ref<boolean>(false);
-const allAlbumsCheck = ref<boolean>(false);
-const checkedPlaylists = ref<string[]>([]);
-const checkedAlbums = ref<string[]>([]);
-const allAlbumObjs = ref([]);
-const allPlaylistObjs = ref([]);
-const user = reactive({ id: String, display_name: String });
-const router = useRouter()
-
 function playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
   const filteredPlaylistIds: string[] = [];
   let filteredPlaylistObjs = [];
@@ -110,7 +103,7 @@ function playlistCheckBoxEvent(aggregateType: string, checkbox: boolean) {
     );
   }
 }
-
+const allAlbumsCheck = ref<boolean>(false);
 function allAlbumsCheckBoxEvent() {
   const allAlbumIds: string[] = [];
   for (let albumObj of allAlbumObjs.value) {
@@ -129,6 +122,10 @@ function allAlbumsCheckBoxEvent() {
   }
 }
 
+const likedSongsBox = ref<boolean>(false);
+const checkedPlaylists = ref<string[]>([]);
+const checkedAlbums = ref<string[]>([]);
+const inputValue = ref<string>("tes");
 async function generatePlaylist() {
   const playlistObject = {
     nameOfPlaylist: inputValue.value,
@@ -146,6 +143,9 @@ async function generatePlaylist() {
   router.push({ name: "results-page", params: { newPlaylistId } });
 }
 
+const allAlbumObjs = ref([]);
+const allPlaylistObjs = ref([]);
+const user = reactive({ id: String, display_name: String });
 onMounted(async () => {
   const userObj = await services.getUser()
   user.id = userObj.id;
