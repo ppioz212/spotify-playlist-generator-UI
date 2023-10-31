@@ -47,7 +47,7 @@ export async function getTracks() {
   });
 }
 
-export async function deleteUser(userId:string) {
+export async function deleteUser(userId: string) {
   await axios.get("http://localhost:8080/deleteUser", {
     headers: { UserId: userId },
   });

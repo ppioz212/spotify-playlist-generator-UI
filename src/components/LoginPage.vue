@@ -31,7 +31,7 @@ function openAuthorizatonUrl() {
     scope +
     "&redirect_uri=" +
     redirectUri;
-    // + "&show_dialog=true";  // Use for proper usage of application to allow logging in and out easily
+  // + "&show_dialog=true";  // Use for proper usage of application to allow logging in and out easily
 
   window.open(AuthUrl, "_self", "noreferrer");
 }
