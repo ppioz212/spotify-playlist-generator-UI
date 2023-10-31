@@ -13,6 +13,7 @@
       </p>
       <p style="margin-top: 0px">(You must select at least one item)</p>
       <Button class="button" label="Generate Playlist" @click="generatePlaylist()" />
+      <Button class="button" label="Reset Data" severity="warning" @click="resetDatabase()" />
     </div>
   </div>
   <div v-if="playlistUI">
@@ -143,9 +144,14 @@ async function generatePlaylist() {
   router.push({ name: "results-page", params: { newPlaylistId } });
 }
 
+async function resetDatabase() {
+  await services.deleteUser(user.id);
+  window.location.reload();
+}
+
 const allAlbumObjs = ref([]);
 const allPlaylistObjs = ref([]);
-const user = reactive({ id: String, display_name: String });
+const user = reactive({ id: String(), display_name: String() });
 onMounted(async () => {
   const userObj = await services.getUser()
   user.id = userObj.id;
@@ -155,11 +161,14 @@ onMounted(async () => {
   console.log(allPlaylistObjs.value);
 
   allAlbumObjs.value = await services.getAlbums();
-  loadingScreen.value = false;
+  // loadingScreen.value = false;
   playlistUI.value = true;
   playlistSelection.value = true;
   console.log("Number of albums returned: " + allAlbumObjs.value.length);
   console.log(allAlbumObjs.value);
+  loadingMessage.value = "Loading all tracks";
+  await services.getTracks();
+  loadingScreen.value = false;
 })
 </script>
 <style scoped>

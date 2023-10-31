@@ -40,6 +40,19 @@ export async function getAlbums() {
   return allAlbumObjs;
 }
 
+export async function getTracks() {
+  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  await axios.get("http://localhost:8080/compileTracks", {
+    headers: { Authorization: tokenObject.access_token },
+  });
+}
+
+export async function deleteUser(userId:string) {
+  await axios.get("http://localhost:8080/deleteUser", {
+    headers: { UserId: userId },
+  });
+}
+
 export async function generatePlaylist(playlistObject: Object) {
   const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
   const newPlaylistId: string = (
