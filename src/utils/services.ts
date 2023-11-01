@@ -1,50 +1,24 @@
 import axios from "axios";
 
-export async function getUser() {
-  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-  const User = (
-    await axios.get("http://localhost:8080/getUser", {
-      headers: { Authorization: tokenObject.access_token },
-    })
-  ).data;
-  return User;
-}
-
 export async function getToken(code: string) {
   const accessTokenObject = (
     await axios.post("http://localhost:8080/getAccessToken", code)
   ).data;
   const date = new Date();
   accessTokenObject.timeGenerated = date.getTime() / 1000;
-  const parsed = JSON.stringify(accessTokenObject);
-  localStorage.setItem("token", parsed);
+  const tokenObjParsed = JSON.stringify(accessTokenObject);
+  localStorage.setItem("token", tokenObjParsed);
 }
 
-export async function getPlaylists() {
+export async function getUser() {
   const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-  const allPlaylistObjs = (
-    await axios.get("http://localhost:8080/getPlaylists", {
+  const userObj = (
+    await axios.get("http://localhost:8080/getUser", {
       headers: { Authorization: tokenObject.access_token },
     })
   ).data;
-  return allPlaylistObjs;
-}
-
-export async function getAlbums() {
-  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-  const allAlbumObjs = (
-    await axios.get("http://localhost:8080/getAlbums", {
-      headers: { Authorization: tokenObject.access_token },
-    })
-  ).data;
-  return allAlbumObjs;
-}
-
-export async function getTracks() {
-  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
-  await axios.get("http://localhost:8080/compileTracks", {
-    headers: { Authorization: tokenObject.access_token },
-  });
+  const userObjParsed = JSON.stringify(userObj);
+  localStorage.setItem("user", userObjParsed);
 }
 
 export async function deleteUser(userId: string) {
@@ -53,13 +27,59 @@ export async function deleteUser(userId: string) {
   });
 }
 
+export async function getPlaylists() {
+  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  const userObject = JSON.parse(localStorage.getItem("user") || "{}");
+  const allPlaylistObjs = (
+    await axios.get("http://localhost:8080/getPlaylists", {
+      headers: {
+        Authorization: tokenObject.access_token,
+        UserId: userObject.id,
+      },
+    })
+  ).data;
+  return allPlaylistObjs;
+}
+
+export async function getAlbums() {
+  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  const userObject = JSON.parse(localStorage.getItem("user") || "{}");
+  const allAlbumObjs = (
+    await axios.get("http://localhost:8080/getAlbums", {
+      headers: {
+        Authorization: tokenObject.access_token,
+        UserId: userObject.id,
+      },
+    })
+  ).data;
+  return allAlbumObjs;
+}
+
+export async function getTracks() {
+  const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  const userObject = JSON.parse(localStorage.getItem("user") || "{}");
+  await axios.get("http://localhost:8080/compileTracks", {
+    headers: {
+      Authorization: tokenObject.access_token,
+      UserId: userObject.id,
+    },
+  });
+}
+
 export async function generatePlaylist(playlistObject: Object) {
   const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
+  const userObject = JSON.parse(localStorage.getItem("user") || "{}");
+  console.log(userObject.id);
   const newPlaylistId: string = (
     await axios.post(
       "http://localhost:8080/generateNewPlaylist",
       playlistObject,
-      { headers: { Authorization: tokenObject.access_token } }
+      {
+        headers: {
+          Authorization: tokenObject.access_token,
+          UserId: userObject.id,
+        },
+      }
     )
   ).data;
   return newPlaylistId;

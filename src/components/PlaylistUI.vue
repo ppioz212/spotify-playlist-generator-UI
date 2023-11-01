@@ -126,7 +126,7 @@ function allAlbumsCheckBoxEvent() {
 const likedSongsBox = ref<boolean>(false);
 const checkedPlaylists = ref<string[]>([]);
 const checkedAlbums = ref<string[]>([]);
-const inputValue = ref<string>("tes");
+const inputValue = ref<string>("test");
 async function generatePlaylist() {
   const playlistObject = {
     nameOfPlaylist: inputValue.value,
@@ -146,16 +146,24 @@ async function generatePlaylist() {
 
 async function resetDatabase() {
   await services.deleteUser(user.id);
+  localStorage.removeItem("user");
   window.location.reload();
+}
+
+async function setUserObject() {
+  if (localStorage.getItem("user") == null) {
+    await services.getUser();
+  }
+  const userObj = JSON.parse(localStorage.getItem("user") || "{}");
+  user.id = userObj.id;
+  user.display_name = userObj.displayName;
 }
 
 const allAlbumObjs = ref([]);
 const allPlaylistObjs = ref([]);
 const user = reactive({ id: String(), display_name: String() });
 onMounted(async () => {
-  const userObj = await services.getUser()
-  user.id = userObj.id;
-  user.display_name = userObj.display_name;
+  await setUserObject();
   allPlaylistObjs.value = await services.getPlaylists();
   console.log("Number of playlists returned: " + allPlaylistObjs.value.length);
   console.log(allPlaylistObjs.value);

@@ -20,6 +20,7 @@ const items = reactive([
 
 function logout() {
   localStorage.removeItem("token");
+  localStorage.removeItem("user");
   window.location.href = "http://localhost:3000";
 }
 </script>
