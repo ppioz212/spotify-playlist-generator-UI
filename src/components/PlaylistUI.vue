@@ -1,27 +1,36 @@
 <template>
-  <div class="mainmenu" v-if="playlistUI" id="app">
-    <div>
-      <p style="margin-bottom: 20px">Enter the name of your playlist:</p>
-      <div class="card flex justify-content-center">
-        <span class="p-float-label">
-          <InputText id="playlistname" v-model="inputValue" />
-          <label class="centerInputText" for="playlistname">Name of Playlist</label>
-        </span>
-      </div>
-      <p style="margin-bottom: 0px">
-        Select what Playlists/Albums you'd like to include:
-      </p>
-      <p style="margin-top: 0px">(You must select at least one item)</p>
-      <Button class="button" label="Generate Playlist" @click="generatePlaylist()" />
-      <Button class="button" label="Reset Data" severity="warning" @click="resetDatabase()" />
+  <main class="mainmenu" v-if="playlistUI">
+    <p style="margin-bottom: 20px; align-items: center">Enter the name of your playlist:</p>
+    <div class="card flex justify-content-center">
+      <span class="p-float-label">
+        <InputText id="playlistname" v-model="inputValue" />
+        <label class="centerInputText" for="playlistname">Name of Playlist</label>
+      </span>
     </div>
-  </div>
-  <div v-if="playlistUI">
+    <p style="margin-bottom: 0px">
+      Select what Playlists/Albums you'd like to include:
+    </p>
+    <p style="margin-top: 0px">(You must select at least one item)</p>
+    <Button class="button" label="Generate Playlist" @click="generatePlaylist()" />
+    <Button class="button" label="Reset Data" severity="warning" @click="resetDatabase()" />
+    <section class="slider-section">
+      <div class="slider-text">
+        Min Tempo:
+        <InputText v-model.number="tempoRange[0]" />
+        Max Tempo:
+        <InputText v-model.number="tempoRange[1]" />
+      </div>
+      <div class="slider-container">
+        <Slider class="slider" :min="minTempo" :max="maxTempo" v-model="tempoRange" range />
+      </div>
+    </section>
+  </main>
+  <section v-if="playlistUI" class="playlist-ui">
     <div>
       Selected Playlists: {{ checkedPlaylists.length }} Selected Albums:
       {{ checkedAlbums.length }}
     </div>
-    <div style="display: flexbox">
+    <section class="checkboxes">
       <Checkbox v-model="userCreatedBox" :binary="true" @change="playlistCheckBoxEvent('UserCreated', userCreatedBox)" />
       <label> User Created Playlists </label>
 
@@ -34,12 +43,12 @@
 
       <Checkbox v-model="allAlbumsCheck" :binary="true" @change="allAlbumsCheckBoxEvent()" />
       <label> Select All Albums </label>
-    </div>
-    <div class="selectionParent" v-if="playlistUI">
+    </section>
+    <section class="selection-parent" v-if="playlistUI">
       <div class="selectionElement">
         <div v-for="playlist in allPlaylistObjs" :key="playlist['id']">
           <Checkbox v-model="checkedPlaylists" :value="playlist['id']" />
-          <label style="margin-left: 5px">
+          <label>
             {{ playlist["name"] }} by {{ playlist["owner"]["displayName"] }}
           </label>
         </div>
@@ -47,13 +56,13 @@
       <div class="selectionElement">
         <div v-for="album in allAlbumObjs" :key="album['id']">
           <Checkbox v-model="checkedAlbums" :value="album['id']" />
-          <label style="margin-left: 5px">
+          <label>
             {{ album["name"] }} by {{ album["artists"] }}
           </label>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+  </section>
   <MySpinner :loading-message="loadingMessage" v-show="loadingScreen" />
 </template>
 
@@ -133,6 +142,8 @@ async function generatePlaylist() {
     playlistsToAdd: checkedPlaylists.value,
     addLikedSongs: likedSongsBox.value,
     albumsToAdd: checkedAlbums.value,
+    minTempo: tempoRange.value[0],
+    maxTempo: tempoRange.value[1]
   };
   playlistUI.value = false;
   playlistSelection.value = false;
@@ -162,6 +173,9 @@ async function setUserObject() {
 const allAlbumObjs = ref([]);
 const allPlaylistObjs = ref([]);
 const user = reactive({ id: String(), display_name: String() });
+const maxTempo = ref();
+const minTempo = ref();
+const tempoRange = ref([]);
 onMounted(async () => {
   await setUserObject();
   allPlaylistObjs.value = await services.getPlaylists();
@@ -169,30 +183,63 @@ onMounted(async () => {
   console.log(allPlaylistObjs.value);
 
   allAlbumObjs.value = await services.getAlbums();
-  // loadingScreen.value = false;
   playlistUI.value = true;
   playlistSelection.value = true;
   console.log("Number of albums returned: " + allAlbumObjs.value.length);
   console.log(allAlbumObjs.value);
+
   loadingMessage.value = "Loading all tracks";
   await services.getTracks();
   loadingScreen.value = false;
+  maxTempo.value = await services.getMaxTempoOfTracks();
+  minTempo.value = await services.getMinTempoOfTracks();
+  tempoRange.value.push(minTempo.value);
+  tempoRange.value.push(maxTempo.value)
+  console.log(tempoRange.value)
 })
 </script>
 <style scoped>
+.checkboxes {
+  display: flex;
+  justify-content: center;
+}
+
+.checkboxes label {
+  margin-left: 5px;
+}
+
+.slider-section {
+  margin-top: 10px;
+}
+
+.slider-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider {
+  margin: 15px 0 0 0;
+  flex-basis: 400px;
+}
+
 .button {
-  margin: 5px;
+  margin: 0 5px 5px 5px;
 }
 
 .centerInputText {
-  width: 89%;
+  width: 100%;
 }
 
-.selectionParent {
-  margin-right: 25%;
-  margin-left: 25%;
+.selection-parent {
   display: flex;
+  justify-content: center;
 }
+
+.selection-parent label {
+  margin-left: 5px;
+}
+
 
 .selectionElement {
   text-align: left;

@@ -7,6 +7,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import Menubar from "primevue/menubar";
 import InputText from "primevue/inputtext";
 import router from "./router";
+import Slider from 'primevue/slider'
 
 import "primevue/resources/themes/saga-blue/theme.css"; //theme
 import "primevue/resources/primevue.min.css"; //core CSS
@@ -22,4 +23,5 @@ app
   .component("Button", Button)
   .component("ProgressSpinner", ProgressSpinner)
   .component("InputText", InputText)
+  .component("Slider", Slider)
   .mount("#app");

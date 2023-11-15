@@ -66,6 +66,31 @@ export async function getTracks() {
   });
 }
 
+export async function getMaxTempoOfTracks() {
+  const userObject = JSON.parse(localStorage.getItem("user") || "{}");
+  const maxTempo: number = (
+    await axios.get("http://localhost:8080/tracks/max", {
+      headers: {
+        UserId: userObject.id,
+      },
+    })
+  ).data;
+  console.log(userObject.id)
+  return maxTempo;
+}
+
+export async function getMinTempoOfTracks() {
+  const userObject = JSON.parse(localStorage.getItem("user") || "{}");
+  const minTempo: number = (
+    await axios.get("http://localhost:8080/tracks/min", {
+      headers: {
+        UserId: userObject.id,
+      },
+    })
+  ).data;
+  return minTempo;
+}
+
 export async function generatePlaylist(playlistObject: Object) {
   const tokenObject = JSON.parse(localStorage.getItem("token") || "{}");
   const userObject = JSON.parse(localStorage.getItem("user") || "{}");
