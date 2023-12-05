@@ -25,27 +25,29 @@
       </div>
     </section>
   </main>
-  <section v-if="playlistUI" class="playlist-ui">
+
+  <MySpinner :loading-message="loadingMessage" v-show="loadingScreen" />
+
+  <body v-if="playlistUI" class="playlist-ui">
+    <section class="checkboxes">
+      <Checkbox v-model="likedSongsBox" :binary="true" />
+      <label> Liked Songs</label>
+    </section>
     <div>
       Selected Playlists: {{ checkedPlaylists.length }} Selected Albums:
       {{ checkedAlbums.length }}
     </div>
-    <section class="checkboxes">
-      <Checkbox v-model="userCreatedBox" :binary="true" @change="playlistCheckBoxEvent('UserCreated', userCreatedBox)" />
-      <label> User Created Playlists </label>
-
-      <Checkbox v-model="followedPlaylistsBox" :binary="true"
-        @change="playlistCheckBoxEvent('Followed', followedPlaylistsBox)" />
-      <label> Followed Playlists</label>
-
-      <Checkbox v-model="likedSongsBox" :binary="true" />
-      <label> Liked Songs</label>
-
-      <Checkbox v-model="allAlbumsCheck" :binary="true" @change="allAlbumsCheckBoxEvent()" />
-      <label> Select All Albums </label>
-    </section>
-    <section class="selection-parent" v-if="playlistUI">
+    <section class="playlist-album-selection" v-if="playlistUI">
       <div class="selectionElement">
+        <h3>Playlists</h3>
+        <section class="checkboxes">
+          <Checkbox v-model="userCreatedBox" :binary="true"
+            @change="playlistCheckBoxEvent('UserCreated', userCreatedBox)" />
+          <label> User Created Playlists </label>
+          <Checkbox v-model="followedPlaylistsBox" :binary="true"
+            @change="playlistCheckBoxEvent('Followed', followedPlaylistsBox)" />
+          <label> Followed Playlists</label>
+        </section>
         <div v-for="playlist in allPlaylistObjs" :key="playlist['id']">
           <Checkbox v-model="checkedPlaylists" :value="playlist['id']" />
           <label>
@@ -54,6 +56,11 @@
         </div>
       </div>
       <div class="selectionElement">
+        <h3>Albums</h3>
+        <section class="checkboxes">
+          <Checkbox v-model="allAlbumsCheck" :binary="true" @change="allAlbumsCheckBoxEvent()" />
+          <label> Select All Albums </label>
+        </section>
         <div v-for="album in allAlbumObjs" :key="album['id']">
           <Checkbox v-model="checkedAlbums" :value="album['id']" />
           <label>
@@ -62,8 +69,7 @@
         </div>
       </div>
     </section>
-  </section>
-  <MySpinner :loading-message="loadingMessage" v-show="loadingScreen" />
+  </body>
 </template>
 
 <script setup lang="ts">
@@ -135,7 +141,7 @@ function allAlbumsCheckBoxEvent() {
 const likedSongsBox = ref<boolean>(false);
 const checkedPlaylists = ref<string[]>([]);
 const checkedAlbums = ref<string[]>([]);
-const inputValue = ref<string>("test");
+const inputValue = ref<string>("");
 async function generatePlaylist() {
   const playlistObject = {
     nameOfPlaylist: inputValue.value,
@@ -205,7 +211,7 @@ onMounted(async () => {
 }
 
 .checkboxes label {
-  margin-left: 5px;
+  margin: 0 5px;
 }
 
 .slider-section {
@@ -231,19 +237,26 @@ onMounted(async () => {
   width: 100%;
 }
 
-.selection-parent {
+.playlist-album-selection {
   display: flex;
   justify-content: center;
 }
 
-.selection-parent label {
+.playlist-album-selection label {
   margin-left: 5px;
 }
 
-
 .selectionElement {
   text-align: left;
-  width: 350px;
+  min-width: 350px;
+  max-width: 500px;
+  background: rgba(248, 249, 250, 255);
+}
+
+.selectionElement h3 {
+  margin: 5px;
+  padding: 0;
+  text-align: center;
   background: rgba(248, 249, 250, 255);
 }
 </style>
