@@ -13,7 +13,7 @@
 <script setup lang="ts">
 function openAuthorizatonUrl() {
   const clientId: string = "1dbfd19797084691bbd011cab62cb6a6";
-  const redirectUri: string = "http://localhost:3000";
+  const redirectUri: string = "http://localhost:5173";
   const scope: string =
     "user-read-private%20" +
     "playlist-modify-private%20" +

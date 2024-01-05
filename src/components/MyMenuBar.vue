@@ -14,14 +14,14 @@ import { reactive } from "vue";
 const items = reactive([
   {
     label: "Home" as string,
-    url: "http://localhost:3000" as string,
+    url: "http://localhost:5173" as string,
   },
 ]);
 
 function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  window.location.href = "http://localhost:3000";
+  window.location.href = "http://localhost:5173";
 }
 </script>
 <style scoped>
